@@ -140,9 +140,30 @@ export function App() {
     }
   };
 
+  const handleSelectSatellite = (sat: SatelliteData | null) => {
+    setSelectedSatellite(sat);
+    setIsFollowMode(false);
+    if (sat && window.innerWidth < 768) {
+      setIsFilterOpen(false);
+    }
+  };
+
+  const handleToggleFilters = () => {
+    const nextState = !isFilterOpen;
+    setIsFilterOpen(nextState);
+    if (nextState && window.innerWidth < 768) {
+      setSelectedSatellite(null);
+    }
+  };
+
   const handleEnterExperience = () => {
     setIsCinematic(false);
-    setIsFilterOpen(true);
+    const isMobile = window.innerWidth < 768;
+    if (isMobile) {
+      setIsFilterOpen(false);
+    } else {
+      setIsFilterOpen(true);
+    }
     // Select the ISS by default for an immediate rich first impression
     const iss = SATELLITE_CATALOG.find(s => s.id === '25544');
     if (iss) setSelectedSatellite(iss);
@@ -181,10 +202,7 @@ export function App() {
         <EarthCanvas
           satellites={filteredSatellites}
           selectedSatellite={selectedSatellite}
-          onSelectSatellite={(sat) => {
-            setSelectedSatellite(sat);
-            setIsFollowMode(false);
-          }}
+          onSelectSatellite={handleSelectSatellite}
           filters={filters}
           timeState={timeState}
           groundStations={GROUND_STATIONS}
@@ -201,10 +219,7 @@ export function App() {
         <Map2DView
           satellites={filteredSatellites}
           selectedSatellite={selectedSatellite}
-          onSelectSatellite={(sat) => {
-            setSelectedSatellite(sat);
-            setIsFollowMode(false);
-          }}
+          onSelectSatellite={handleSelectSatellite}
           filters={filters}
           timeState={timeState}
           groundStations={GROUND_STATIONS}
@@ -250,7 +265,7 @@ export function App() {
             filters={filters}
             onChangeFilters={setFilters}
             isOpen={isFilterOpen}
-            onToggleOpen={() => setIsFilterOpen(!isFilterOpen)}
+            onToggleOpen={handleToggleFilters}
             totalSatellites={SATELLITE_CATALOG.length}
             filteredCount={filteredSatellites.length}
           />
@@ -296,7 +311,7 @@ export function App() {
               onClearAll={() => setCompareIds([])}
               onClose={() => setIsCompareOpen(false)}
               onSelectSatellite={(sat) => {
-                setSelectedSatellite(sat);
+                handleSelectSatellite(sat);
                 setIsCompareOpen(false);
               }}
               timeState={timeState}
@@ -311,7 +326,7 @@ export function App() {
               onClearAll={() => setWatchlistIds([])}
               onClose={() => setIsWatchlistOpen(false)}
               onSelectSatellite={(sat) => {
-                setSelectedSatellite(sat);
+                handleSelectSatellite(sat);
                 setIsWatchlistOpen(false);
               }}
               timeState={timeState}

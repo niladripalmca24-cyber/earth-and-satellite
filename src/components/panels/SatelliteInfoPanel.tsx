@@ -64,7 +64,7 @@ export const SatelliteInfoPanel: React.FC<SatelliteInfoPanelProps> = ({
   };
 
   return (
-    <aside className="absolute top-16 right-4 bottom-24 w-88 max-w-[calc(100vw-2rem)] z-20 glass-panel flex flex-col shadow-2xl transition-all duration-300 animate-in slide-in-from-right">
+    <aside className="absolute top-14 sm:top-16 right-2 sm:right-4 bottom-20 sm:bottom-24 w-auto sm:w-88 left-2 sm:left-auto max-w-[calc(100vw-1rem)] z-20 glass-panel flex flex-col shadow-2xl transition-all duration-300 animate-in slide-in-from-right">
       {/* Corner Brackets */}
       <div className="hud-corner-tl" />
       <div className="hud-corner-tr" />
@@ -72,9 +72,9 @@ export const SatelliteInfoPanel: React.FC<SatelliteInfoPanelProps> = ({
       <div className="hud-corner-br" />
 
       {/* Header */}
-      <div className="p-4 border-b border-cyan-500/20 flex items-start justify-between">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
+      <div className="p-3 sm:p-4 border-b border-cyan-500/20 flex items-start justify-between gap-2">
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-1.5 sm:gap-2 mb-1 flex-wrap">
             <span className={`badge-regime ${satellite.regime}`}>
               {satellite.regime}
             </span>
@@ -87,10 +87,10 @@ export const SatelliteInfoPanel: React.FC<SatelliteInfoPanelProps> = ({
               </span>
             )}
           </div>
-          <h2 className="text-base font-display font-black text-white tracking-wide">
+          <h2 className="text-sm sm:text-base font-display font-black text-white tracking-wide truncate">
             {satellite.name}
           </h2>
-          <div className="text-[11px] font-mono text-slate-400">
+          <div className="text-[10px] sm:text-[11px] font-mono text-slate-400 truncate">
             {satellite.operator} • {satellite.country}
           </div>
         </div>
@@ -100,7 +100,7 @@ export const SatelliteInfoPanel: React.FC<SatelliteInfoPanelProps> = ({
             audio.playHover();
             onClose();
           }}
-          className="text-slate-400 hover:text-white p-1 rounded hover:bg-white/5 transition-colors"
+          className="text-slate-400 hover:text-white p-1.5 rounded hover:bg-white/10 transition-colors cursor-pointer shrink-0"
           title="Close Panel"
         >
           <X className="w-5 h-5" />
@@ -108,7 +108,7 @@ export const SatelliteInfoPanel: React.FC<SatelliteInfoPanelProps> = ({
       </div>
 
       {/* Content Body */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 font-mono text-xs">
+      <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3.5 sm:space-y-4 font-mono text-xs no-scrollbar touch-scroll">
         {/* Live Dynamics Telemetry Box */}
         <div className="p-3 rounded bg-cyan-950/20 border border-cyan-500/30">
           <div className="flex items-center justify-between mb-2">

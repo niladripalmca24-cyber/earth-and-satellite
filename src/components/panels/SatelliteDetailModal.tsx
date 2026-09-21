@@ -412,8 +412,8 @@ export const SatelliteDetailModal: React.FC<SatelliteDetailModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 md:p-6 bg-black/85 backdrop-blur-md animate-in fade-in">
-      <div className="relative w-full max-w-5xl max-h-[92vh] glass-panel border-cyan-500/40 shadow-[0_0_80px_rgba(0,240,255,0.25)] flex flex-col overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 md:p-6 bg-black/85 backdrop-blur-md animate-in fade-in">
+      <div className="relative w-full max-w-5xl max-h-[94vh] sm:max-h-[92vh] glass-panel border-cyan-500/40 shadow-[0_0_80px_rgba(0,240,255,0.25)] flex flex-col overflow-hidden">
         {/* Corner HUD brackets */}
         <div className="hud-corner-tl" />
         <div className="hud-corner-tr" />
@@ -421,23 +421,23 @@ export const SatelliteDetailModal: React.FC<SatelliteDetailModalProps> = ({
         <div className="hud-corner-br" />
 
         {/* Modal Top Header */}
-        <div className="p-4 md:px-6 md:py-4 border-b border-cyan-500/20 flex items-center justify-between bg-black/50">
-          <div className="flex items-center gap-3">
+        <div className="p-3 sm:p-4 md:px-6 md:py-4 border-b border-cyan-500/20 flex items-start sm:items-center justify-between gap-2 bg-black/50">
+          <div className="flex items-start sm:items-center gap-2 sm:gap-3 min-w-0 flex-1">
             <button
               onClick={() => {
                 audio.playHover();
                 onClose();
               }}
-              className="p-2 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:text-white hover:bg-cyan-500/20 transition-all flex items-center gap-1.5 font-display text-xs"
+              className="p-1.5 sm:p-2 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:text-white hover:bg-cyan-500/20 transition-all flex items-center gap-1.5 font-display text-xs shrink-0 cursor-pointer"
               title="Return to 3D Globe"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span className="hidden sm:inline">RETURN TO GLOBE</span>
+              <span className="hidden md:inline">RETURN TO GLOBE</span>
             </button>
 
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-lg md:text-2xl font-display font-black text-white tracking-wide">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                <h1 className="text-base sm:text-lg md:text-2xl font-display font-black text-white tracking-wide truncate">
                   {satellite.name}
                 </h1>
                 <span className={`badge-regime ${satellite.regime}`}>
@@ -447,7 +447,7 @@ export const SatelliteDetailModal: React.FC<SatelliteDetailModalProps> = ({
                   {satellite.category.replace('_', ' ')}
                 </span>
               </div>
-              <div className="text-[11px] font-mono text-slate-400">
+              <div className="text-[10px] sm:text-[11px] font-mono text-slate-400 truncate">
                 NORAD #{satellite.id} • {satellite.intlDes} • {satellite.operator} ({satellite.country})
               </div>
             </div>
@@ -458,14 +458,14 @@ export const SatelliteDetailModal: React.FC<SatelliteDetailModalProps> = ({
               audio.playHover();
               onClose();
             }}
-            className="text-slate-400 hover:text-white p-2 rounded hover:bg-white/10 transition-colors"
+            className="text-slate-400 hover:text-white p-1.5 rounded hover:bg-white/10 transition-colors shrink-0 cursor-pointer"
           >
-            <X className="w-6 h-6" />
+            <X className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
         </div>
 
         {/* Navigation Tabs Bar */}
-        <div className="flex items-center gap-1 px-4 md:px-6 border-b border-cyan-500/20 bg-slate-950/60 font-display text-xs overflow-x-auto">
+        <div className="flex items-center gap-1 px-3 md:px-6 border-b border-cyan-500/20 bg-slate-950/60 font-display text-xs overflow-x-auto no-scrollbar touch-scroll">
           {[
             { id: 'blueprint' as ModalTab, label: '3D SCHEMATIC & ORBIT', icon: Cpu },
             { id: 'photo' as ModalTab, label: 'REAL SATELLITE PHOTO', icon: Camera },
@@ -482,7 +482,7 @@ export const SatelliteDetailModal: React.FC<SatelliteDetailModalProps> = ({
                   audio.playHover();
                   setActiveTab(tab.id);
                 }}
-                className={`py-3 px-3.5 flex items-center gap-2 border-b-2 transition-all whitespace-nowrap cursor-pointer ${
+                className={`py-2.5 sm:py-3 px-2.5 sm:px-3.5 flex items-center gap-1.5 sm:gap-2 border-b-2 transition-all whitespace-nowrap cursor-pointer text-xs ${
                   active
                     ? 'border-cyan-400 text-cyan-300 font-bold bg-cyan-500/10'
                     : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-white/5'
@@ -501,7 +501,7 @@ export const SatelliteDetailModal: React.FC<SatelliteDetailModalProps> = ({
         </div>
 
         {/* Modal Scrollable Body */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+        <div className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6 no-scrollbar touch-scroll">
 
           {/* TAB 1: 3D SCHEMATIC & ORBITAL DYNAMICS */}
           {activeTab === 'blueprint' && (

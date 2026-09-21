@@ -76,10 +76,10 @@ export const CinematicLanding: React.FC<CinematicLandingProps> = ({
       </div>
 
       {/* MAIN AEROSPACE SHOWCASE CONTAINER (Sleek Glassmorphic Floating Card) */}
-      <div className="relative w-full max-w-[1260px] h-full max-h-[88vh] min-h-[580px] rounded-[28px] sm:rounded-[36px] border border-white/[0.12] shadow-[0_25px_90px_rgba(0,0,0,0.92)] flex flex-col justify-between overflow-hidden pointer-events-auto bg-gradient-to-b from-[#0e131d]/75 via-[#0a0e17]/15 to-[#080b12]/85">
+      <div className="relative w-full max-w-[1260px] h-full max-h-[94vh] sm:max-h-[88vh] min-h-0 rounded-[22px] sm:rounded-[36px] border border-white/[0.12] shadow-[0_25px_90px_rgba(0,0,0,0.92)] flex flex-col justify-between overflow-y-auto md:overflow-hidden no-scrollbar touch-scroll pointer-events-auto bg-gradient-to-b from-[#0e131d]/85 via-[#0a0e17]/35 to-[#080b12]/90">
         
         {/* TOP NAVIGATION BAR */}
-        <header className="w-full px-6 sm:px-10 py-5 flex items-center justify-between border-b border-white/[0.06] z-20">
+        <header className="w-full px-4 sm:px-10 py-3.5 sm:py-5 flex items-center justify-between border-b border-white/[0.06] z-20">
           {/* Aerospace Stylized Monogram Logo */}
           <div 
             onClick={() => {
@@ -93,17 +93,17 @@ export const CinematicLanding: React.FC<CinematicLandingProps> = ({
               viewBox="0 0 32 32" 
               fill="none" 
               xmlns="http://www.w3.org/2000/svg" 
-              className="w-7 h-7 text-white group-hover:text-cyan-400 transition-colors"
+              className="w-6 h-6 sm:w-7 sm:h-7 text-white group-hover:text-cyan-400 transition-colors"
             >
               <path 
                 d="M16 6C10.477 6 6 10.477 6 16C6 21.523 10.477 26 16 26C21.523 26 26 21.523 26 16C26 12 23 9 19 9C15 9 13 12 13 16C13 18.5 14.5 20 17 20C19.5 20 21 18.5 21 16" 
                 stroke="currentColor" 
                 strokeWidth="2.8" 
-                strokeLinecap="round"
+                strokeLinecap="round" 
               />
             </svg>
-            <span className="font-hero font-bold text-xs tracking-widest text-white hidden sm:inline">
-              EARTHORBIT 3D
+            <span className="font-hero font-bold text-[11px] sm:text-xs tracking-widest text-white">
+              EARTHORBIT <span className="text-cyan-400">3D</span>
             </span>
           </div>
 
@@ -148,11 +148,11 @@ export const CinematicLanding: React.FC<CinematicLandingProps> = ({
           </nav>
 
           {/* Right Action Icons */}
-          <div className="flex items-center gap-3 sm:gap-4 text-slate-300">
+          <div className="flex items-center gap-2 sm:gap-4 text-slate-300">
             {/* Audio Toggle */}
             <button
               onClick={handleToggleSound}
-              className="p-2 rounded-full hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
+              className="p-1.5 sm:p-2 rounded-full hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
               title={isMuted ? 'Enable Sound FX' : 'Mute Audio'}
             >
               {isMuted ? <VolumeX className="w-4 h-4 text-rose-400" /> : <Volume2 className="w-4 h-4 text-cyan-400" />}
@@ -164,7 +164,7 @@ export const CinematicLanding: React.FC<CinematicLandingProps> = ({
                 audio.playHover();
                 setIsSearchOpen(!isSearchOpen);
               }}
-              className="p-2 rounded-full hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
+              className="p-1.5 sm:p-2 rounded-full hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
               title="Search Missions & Satellites"
             >
               <Search className="w-4 h-4" />
@@ -176,7 +176,7 @@ export const CinematicLanding: React.FC<CinematicLandingProps> = ({
                 audio.playHover();
                 setActiveModal('about');
               }}
-              className="p-2 rounded-full hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
+              className="p-1.5 sm:p-2 rounded-full hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
               title="About EarthOrbit 3D"
             >
               <Info className="w-4 h-4 text-white" />
@@ -210,20 +210,20 @@ export const CinematicLanding: React.FC<CinematicLandingProps> = ({
           </div>
         )}
 
-        {/* CENTER HERO TYPOGRAPHY OVERLAY */}
-        <div className="absolute top-[12%] sm:top-[14%] left-1/2 -translate-x-1/2 w-full max-w-3xl text-center px-4 z-10 pointer-events-none select-none">
-          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-[4.25rem] font-hero font-extrabold text-white tracking-tight uppercase leading-[0.92] drop-shadow-[0_12px_36px_rgba(0,0,0,0.95)]">
+        {/* HERO TYPOGRAPHY: Responsive in normal flow on mobile, absolute top on desktop */}
+        <div className="w-full text-center px-4 pt-4 md:pt-0 md:absolute md:top-[12%] lg:top-[14%] md:left-1/2 md:-translate-x-1/2 md:max-w-3xl z-10 pointer-events-none select-none">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-[4.25rem] font-hero font-extrabold text-white tracking-tight uppercase leading-[0.96] md:leading-[0.92] drop-shadow-[0_12px_36px_rgba(0,0,0,0.95)]">
             EXPLORE EARTH <br />
             TRACK SPACE
           </h1>
         </div>
 
         {/* MIDDLE CONTENT COLUMNS (FLANKING THE 3D EARTH) */}
-        <div className="relative flex-1 flex flex-col md:flex-row items-end md:items-center justify-between px-6 sm:px-10 lg:px-14 py-2 gap-6 z-10">
+        <div className="relative flex-1 flex flex-col md:flex-row items-center md:items-center justify-between px-4 sm:px-10 lg:px-14 py-2 sm:py-4 gap-4 md:gap-6 z-10">
           
           {/* LEFT COLUMN: FEATURED SATELLITES */}
-          <div className="w-full md:w-80 space-y-2 select-none">
-            <div className="text-[11px] font-hero font-bold text-white tracking-widest uppercase mb-1">
+          <div className="w-full md:w-80 space-y-1.5 sm:space-y-2 select-none">
+            <div className="text-[10px] sm:text-[11px] font-hero font-bold text-white tracking-widest uppercase mb-1">
               FEATURED SATELLITES
             </div>
 
@@ -233,9 +233,9 @@ export const CinematicLanding: React.FC<CinematicLandingProps> = ({
                   key={item.id}
                   onClick={() => handleLaunchClick(item.key)}
                   onMouseEnter={() => audio.playHover()}
-                  className="py-3.5 flex items-center justify-between text-slate-300 hover:text-white cursor-pointer group transition-all"
+                  className="py-2.5 sm:py-3.5 flex items-center justify-between text-slate-300 hover:text-white cursor-pointer group transition-all"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2.5 sm:gap-3">
                     <span className="text-[10px] font-mono text-slate-500 group-hover:text-cyan-400 transition-colors">
                       {item.id}
                     </span>
@@ -243,7 +243,7 @@ export const CinematicLanding: React.FC<CinematicLandingProps> = ({
                       <div className="text-xs sm:text-[13px] font-medium tracking-wide">
                         {item.name}
                       </div>
-                      <div className="text-[10px] text-slate-500 font-mono">
+                      <div className="text-[9px] sm:text-[10px] text-slate-500 font-mono">
                         {item.sub}
                       </div>
                     </div>
@@ -257,7 +257,7 @@ export const CinematicLanding: React.FC<CinematicLandingProps> = ({
                     strokeWidth="2.2" 
                     strokeLinecap="round" 
                     strokeLinejoin="round" 
-                    className="w-4 h-4 text-slate-500 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
+                    className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500 group-hover:text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
                   >
                     <line x1="7" y1="17" x2="17" y2="7"></line>
                     <polyline points="7 7 17 7 17 17"></polyline>
@@ -267,8 +267,8 @@ export const CinematicLanding: React.FC<CinematicLandingProps> = ({
             </div>
           </div>
 
-          {/* RIGHT COLUMN: LIVE ORBIT TELEMETRY SPOTLIGHT */}
-          <div className="w-full md:w-80 flex flex-col items-start md:items-end select-none">
+          {/* RIGHT COLUMN: LIVE ORBIT TELEMETRY SPOTLIGHT (Hidden on small mobile to avoid vertical crowding) */}
+          <div className="hidden md:flex w-full md:w-80 flex-col items-start md:items-end select-none">
             <div className="text-[11px] font-hero font-bold text-white tracking-widest uppercase mb-3 text-left md:text-right w-full">
               LIVE TELEMETRY <br />
               SPOTLIGHT
@@ -331,17 +331,17 @@ export const CinematicLanding: React.FC<CinematicLandingProps> = ({
         </div>
 
         {/* BOTTOM CONTROLS & CHUNKY NOTCHED BUTTON */}
-        <div className="w-full px-6 sm:px-10 py-4 sm:py-5 flex items-center justify-between border-t border-white/[0.06] z-20">
+        <div className="w-full px-4 sm:px-10 py-3.5 sm:py-5 flex items-center justify-between border-t border-white/[0.06] z-20">
           
-          {/* Bottom Left: Chunky Notched Arrow Button matching reference image */}
-          <div className="flex items-center gap-3 select-none">
+          {/* Bottom Left: Chunky Notched Arrow Button */}
+          <div className="flex items-center gap-2.5 sm:gap-3 select-none">
             <button
               onClick={() => {
                 audio.playEnterExperience();
                 onEnter();
               }}
               onMouseEnter={() => audio.playHover()}
-              className="w-13 h-13 sm:w-16 sm:h-16 bg-black border-2 border-white/30 hover:border-white rounded-2xl flex items-center justify-center shadow-[0_0_25px_rgba(0,0,0,0.8)] hover:shadow-[0_0_35px_rgba(255,255,255,0.35)] transition-all duration-300 cursor-pointer group"
+              className="w-12 h-12 sm:w-16 sm:h-16 bg-black border-2 border-white/30 hover:border-white rounded-xl sm:rounded-2xl flex items-center justify-center shadow-[0_0_25px_rgba(0,0,0,0.8)] hover:shadow-[0_0_35px_rgba(255,255,255,0.35)] transition-all duration-300 cursor-pointer group shrink-0"
               title="Enter Interactive 3D Orbit Explorer"
             >
               <svg 
@@ -351,20 +351,20 @@ export const CinematicLanding: React.FC<CinematicLandingProps> = ({
                 strokeWidth="3.4" 
                 strokeLinecap="round" 
                 strokeLinejoin="round" 
-                className="w-7 h-7 sm:w-9 sm:h-9 text-white group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"
+                className="w-6 h-6 sm:w-9 sm:h-9 text-white group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"
               >
                 <line x1="7" y1="17" x2="17" y2="7"></line>
                 <polyline points="7 7 17 7 17 17"></polyline>
               </svg>
             </button>
-            <div className="hidden sm:block">
-              <div className="font-hero font-bold text-xs text-white tracking-wider">ENTER 3D EXPLORER</div>
-              <div className="text-[10px] font-mono text-slate-400">Launch SGP4 Orbit Intelligence</div>
+            <div className="flex flex-col">
+              <div className="font-hero font-bold text-xs sm:text-xs text-white tracking-wider">ENTER 3D EXPLORER</div>
+              <div className="text-[9px] sm:text-[10px] font-mono text-slate-400">Launch SGP4 Orbit Intelligence</div>
             </div>
           </div>
 
-          {/* Bottom Center: Minimalist Regime Dash Indicators */}
-          <div className="flex items-center gap-2 select-none">
+          {/* Bottom Center: Minimalist Regime Dash Indicators (visible on sm+) */}
+          <div className="hidden sm:flex items-center gap-2 select-none">
             {regimes.map((reg, idx) => (
               <button
                 key={reg}
@@ -384,9 +384,9 @@ export const CinematicLanding: React.FC<CinematicLandingProps> = ({
           </div>
 
           {/* Bottom Right: Live Satellite Telemetry Status */}
-          <div className="flex items-center gap-2 text-[10px] font-mono text-slate-400 select-none">
+          <div className="flex items-center gap-2 text-[9px] sm:text-[10px] font-mono text-slate-400 select-none whitespace-nowrap">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="tracking-wider">{satelliteCount} OBJECTS TRACKED</span>
+            <span className="tracking-wider">{satelliteCount} OBJECTS</span>
           </div>
         </div>
       </div>

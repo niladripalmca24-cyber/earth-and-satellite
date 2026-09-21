@@ -24,25 +24,25 @@ export const CompareDrawer: React.FC<CompareDrawerProps> = ({
   return (
     <div className="fixed inset-y-0 right-0 z-40 w-full max-w-xl glass-panel border-l border-amber-500/30 flex flex-col shadow-2xl animate-in slide-in-from-right duration-300">
       {/* Header */}
-      <div className="p-4 border-b border-amber-500/20 flex items-center justify-between bg-black/40">
-        <div className="flex items-center gap-2">
-          <Layers className="w-5 h-5 text-amber-400" />
-          <h2 className="font-display font-bold text-sm tracking-wider text-white uppercase">
-            ORBITAL COMPARISON MATRIX ({satellites.length}/3)
+      <div className="p-3 sm:p-4 border-b border-amber-500/20 flex items-center justify-between gap-2 bg-black/40">
+        <div className="flex items-center gap-2 min-w-0 flex-1">
+          <Layers className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400 shrink-0" />
+          <h2 className="font-display font-bold text-xs sm:text-sm tracking-wider text-white uppercase truncate">
+            ORBITAL COMPARISON ({satellites.length}/3)
           </h2>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           {satellites.length > 0 && (
             <button
               onClick={() => {
                 audio.playHover();
                 onClearAll();
               }}
-              className="text-xs text-rose-400 hover:text-rose-300 flex items-center gap-1 font-mono p-1"
+              className="text-xs text-rose-400 hover:text-rose-300 flex items-center gap-1 font-mono p-1 cursor-pointer"
             >
               <Trash2 className="w-3.5 h-3.5" />
-              <span>Clear</span>
+              <span className="hidden sm:inline">Clear</span>
             </button>
           )}
           <button
@@ -50,7 +50,7 @@ export const CompareDrawer: React.FC<CompareDrawerProps> = ({
               audio.playHover();
               onClose();
             }}
-            className="text-slate-400 hover:text-white p-1 rounded hover:bg-white/10"
+            className="text-slate-400 hover:text-white p-1 rounded hover:bg-white/10 cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -58,7 +58,7 @@ export const CompareDrawer: React.FC<CompareDrawerProps> = ({
       </div>
 
       {/* Comparison Grid */}
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto p-3 sm:p-4 no-scrollbar touch-scroll">
         {satellites.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center p-8 text-slate-500">
             <Layers className="w-12 h-12 text-slate-600 mb-3" />

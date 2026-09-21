@@ -13,7 +13,8 @@ import {
   Palette,
   ShieldCheck,
   Check,
-  Sparkles
+  Sparkles,
+  MoreHorizontal
 } from 'lucide-react';
 import { ViewMode, TimeState, ColorGradeMode } from '../../types/satellite';
 import { audio } from '../../services/audioService';
@@ -65,6 +66,7 @@ export const TopNavHUD: React.FC<TopNavHUDProps> = ({
   const [utcString, setUtcString] = useState('');
   const [julianDate, setJulianDate] = useState('');
   const [isGradeMenuOpen, setIsGradeMenuOpen] = useState(false);
+  const [isMobileToolsOpen, setIsMobileToolsOpen] = useState(false);
   const [showPermissionToast, setShowPermissionToast] = useState(false);
 
   // Update UTC and Julian date clock
@@ -103,26 +105,31 @@ export const TopNavHUD: React.FC<TopNavHUDProps> = ({
   const currentPreset = COLOR_GRADE_PRESETS.find(p => p.id === colorGrade) || COLOR_GRADE_PRESETS[0];
 
   return (
-    <header className="absolute top-0 left-0 right-0 z-20 pointer-events-none px-3 sm:px-6 py-3 flex items-center justify-between font-ui">
+    <header className="absolute top-0 left-0 right-0 z-20 pointer-events-none px-2.5 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between font-ui">
       {/* Left: Brand & Status */}
-      <div className="flex items-center gap-3 sm:gap-4 pointer-events-auto">
+      <div className="flex items-center gap-2 sm:gap-4 pointer-events-auto">
         <div 
           onClick={onReplayCinematic}
-          className="glass-panel px-3 py-1.5 sm:px-3.5 sm:py-2 flex items-center gap-3 cursor-pointer hover:border-cyan-400 transition-all shadow-[0_0_15px_rgba(0,240,255,0.15)]"
+          className="glass-panel px-2.5 py-1.5 sm:px-3.5 sm:py-2 flex items-center gap-2.5 sm:gap-3 cursor-pointer hover:border-cyan-400 transition-all shadow-[0_0_15px_rgba(0,240,255,0.15)]"
           title="Return to cinematic intro"
         >
-          <div className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping" />
+          <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-cyan-400 animate-ping shrink-0" />
           <div>
-            <div className="font-hero font-extrabold text-xs sm:text-sm tracking-wider text-white">
+            <div className="font-hero font-extrabold text-[11px] sm:text-sm tracking-wider text-white">
               EARTHORBIT <span className="text-cyan-400">3D</span>
             </div>
-            <div className="text-[9px] font-mono text-slate-400 tracking-wider">
+            <div className="text-[8px] sm:text-[9px] font-mono text-slate-400 tracking-wider hidden xs:block">
               MISSION INTELLIGENCE
             </div>
           </div>
         </div>
 
-        {/* Live Status indicator */}
+        {/* Mobile compact UTC clock */}
+        <div className="lg:hidden text-[10px] font-mono text-cyan-300 font-bold px-2 py-0.5 rounded bg-cyan-950/60 border border-cyan-500/20 whitespace-nowrap">
+          {utcString.replace(' UTC', '')}
+        </div>
+
+        {/* Live Status indicator (desktop) */}
         <div className="hidden lg:flex items-center gap-2 glass-panel-subtle px-3 py-1.5 text-xs font-mono">
           <Activity className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
           <span className="text-slate-300">TRACKING:</span>
@@ -141,8 +148,8 @@ export const TopNavHUD: React.FC<TopNavHUDProps> = ({
         </button>
       </div>
 
-      {/* Center: Mission Chronometer */}
-      <div className="pointer-events-auto flex items-center gap-3 glass-panel px-3 sm:px-4 py-1.5 sm:py-2 border-cyan-500/30">
+      {/* Center: Mission Chronometer (desktop/large screens) */}
+      <div className="hidden lg:flex pointer-events-auto items-center gap-3 glass-panel px-3 sm:px-4 py-1.5 sm:py-2 border-cyan-500/30">
         <div className="text-center">
           <div className="font-mono text-xs sm:text-base font-bold text-cyan-300 tracking-wider">
             {utcString}
@@ -161,7 +168,7 @@ export const TopNavHUD: React.FC<TopNavHUDProps> = ({
             audio.playSelect();
             onOpenLiveEarthFeed();
           }}
-          className="glass-panel px-2.5 py-1.5 sm:px-3 text-xs font-mono flex items-center gap-2 border-rose-500/40 hover:border-rose-400 text-slate-200 transition-all cursor-pointer shadow-[0_0_15px_rgba(244,63,94,0.25)] hover:shadow-[0_0_20px_rgba(244,63,94,0.4)]"
+          className="glass-panel px-2 py-1.5 sm:px-3 text-xs font-mono flex items-center gap-1.5 sm:gap-2 border-rose-500/40 hover:border-rose-400 text-slate-200 transition-all cursor-pointer shadow-[0_0_15px_rgba(244,63,94,0.25)] hover:shadow-[0_0_20px_rgba(244,63,94,0.4)]"
           title="Open Real-Life Live Earth Video Streams & Satellite Feeds"
         >
           <span className="relative flex h-2 w-2">
@@ -171,35 +178,232 @@ export const TopNavHUD: React.FC<TopNavHUDProps> = ({
           <span className="hidden sm:inline font-display font-bold tracking-wider text-rose-300 text-[11px]">
             LIVE EARTH FEED
           </span>
+          <span className="inline sm:hidden font-display font-bold tracking-wider text-rose-300 text-[10px]">
+            LIVE
+          </span>
         </button>
 
-        {/* Professional Color Grading Preset Selector */}
-        <div className="relative">
+        {/* 2D / 3D Projection Toggle */}
+        <div className="glass-panel p-1 flex items-center gap-1">
+          <button
+            onClick={() => {
+              audio.playSelect();
+              onToggleViewMode('3D');
+            }}
+            className={`px-1.5 py-1 sm:px-2.5 text-xs font-display flex items-center gap-1 sm:gap-1.5 rounded transition-all ${
+              viewMode === '3D' 
+                ? 'bg-cyan-500/30 text-cyan-300 border border-cyan-400/50 shadow-[0_0_10px_rgba(0,240,255,0.3)]' 
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Globe className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">3D</span>
+          </button>
+
+          <button
+            onClick={() => {
+              audio.playSelect();
+              onToggleViewMode('2D');
+            }}
+            className={`px-1.5 py-1 sm:px-2.5 text-xs font-display flex items-center gap-1 sm:gap-1.5 rounded transition-all ${
+              viewMode === '2D' 
+                ? 'bg-cyan-500/30 text-cyan-300 border border-cyan-400/50 shadow-[0_0_10px_rgba(0,240,255,0.3)]' 
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Map className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">2D</span>
+          </button>
+        </div>
+
+        {/* Audio Mute toggle (always visible) */}
+        <button
+          onClick={handleToggleSound}
+          className="glass-panel p-1.5 sm:p-2 text-slate-300 hover:text-white hover:border-cyan-400 transition-colors cursor-pointer"
+          title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
+        >
+          {isMuted ? <VolumeX className="w-4 h-4 text-rose-400" /> : <Volume2 className="w-4 h-4 text-cyan-400" />}
+        </button>
+
+        {/* DESKTOP-ONLY DIRECT ACCESS TOOL BUTTONS */}
+        <div className="hidden md:flex items-center gap-1.5 sm:gap-2">
+          {/* Professional Color Grading Preset Selector */}
+          <div className="relative">
+            <button
+              onClick={() => {
+                audio.playHover();
+                setIsGradeMenuOpen(!isGradeMenuOpen);
+              }}
+              className="glass-panel px-2.5 py-1.5 sm:px-3 text-xs font-mono flex items-center gap-2 border-cyan-500/30 hover:border-cyan-400 text-slate-200 transition-all cursor-pointer"
+              title="Professional Color Grading Profiles"
+            >
+              <Palette className="w-3.5 h-3.5 text-cyan-400" />
+              <span className="hidden lg:inline text-[11px] font-display font-medium uppercase tracking-wider">
+                {currentPreset.name}
+              </span>
+              <span 
+                className="w-2 h-2 rounded-full" 
+                style={{ backgroundColor: currentPreset.color }} 
+              />
+            </button>
+
+            {/* Color Grading Dropdown Menu */}
+            {isGradeMenuOpen && (
+              <div className="absolute right-0 mt-2 w-56 glass-panel p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 border-cyan-500/40">
+                <div className="text-[10px] font-display font-bold text-slate-400 uppercase tracking-wider px-2 py-1 mb-1 border-b border-white/5">
+                  Color Grading Profile
+                </div>
+                <div className="space-y-1">
+                  {COLOR_GRADE_PRESETS.map(preset => {
+                    const active = colorGrade === preset.id;
+                    return (
+                      <button
+                        key={preset.id}
+                        onClick={() => {
+                          audio.playSelect();
+                          onChangeColorGrade(preset.id);
+                          setIsGradeMenuOpen(false);
+                        }}
+                        className={`w-full px-2.5 py-2 rounded text-left flex items-center justify-between text-xs font-mono transition-all cursor-pointer ${
+                          active
+                            ? 'bg-cyan-500/20 border border-cyan-400/50 text-cyan-300 font-bold'
+                            : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span 
+                            className="w-2 h-2 rounded-full" 
+                            style={{ backgroundColor: preset.color }} 
+                          />
+                          <span>{preset.name}</span>
+                        </div>
+                        <span className="text-[9px] text-slate-500 uppercase">
+                          {preset.tag}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Watchlist button */}
+          <button
+            onClick={() => {
+              audio.playSelect();
+              onOpenWatchlist();
+            }}
+            className="glass-panel p-2 text-slate-300 hover:text-cyan-400 hover:border-cyan-400 transition-colors relative cursor-pointer"
+            title="Open Watchlist"
+          >
+            <Bookmark className="w-4 h-4" />
+            {watchlistCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-cyan-500 text-black text-[9px] font-bold flex items-center justify-center font-mono">
+                {watchlistCount}
+              </span>
+            )}
+          </button>
+
+          {/* Compare button */}
+          <button
+            onClick={() => {
+              audio.playSelect();
+              onOpenCompare();
+            }}
+            className="glass-panel p-2 text-slate-300 hover:text-amber-400 hover:border-amber-400 transition-colors relative cursor-pointer"
+            title="Compare Satellites"
+          >
+            <Layers className="w-4 h-4" />
+            {comparisonCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-amber-500 text-black text-[9px] font-bold flex items-center justify-center font-mono">
+                {comparisonCount}
+              </span>
+            )}
+          </button>
+
+          {/* Data Provenance modal button */}
+          <button
+            onClick={() => {
+              audio.playSelect();
+              onOpenProvenance();
+            }}
+            className="glass-panel p-2 text-slate-300 hover:text-white hover:border-cyan-400 transition-colors cursor-pointer"
+            title="Data Provenance & Scientific Ephemeris"
+          >
+            <Info className="w-4 h-4" />
+          </button>
+
+          {/* Reset Camera View */}
+          <button
+            onClick={() => {
+              audio.playSelect();
+              onResetView();
+            }}
+            className="glass-panel p-2 text-slate-300 hover:text-white hover:border-cyan-400 transition-colors cursor-pointer"
+            title="Reset Camera View"
+          >
+            <RotateCcw className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* MOBILE QUICK TOOLS BUTTON (< md) */}
+        <div className="relative md:hidden">
           <button
             onClick={() => {
               audio.playHover();
-              setIsGradeMenuOpen(!isGradeMenuOpen);
+              setIsMobileToolsOpen(!isMobileToolsOpen);
             }}
-            className="glass-panel px-2.5 py-1.5 sm:px-3 text-xs font-mono flex items-center gap-2 border-cyan-500/30 hover:border-cyan-400 text-slate-200 transition-all cursor-pointer"
-            title="Professional Color Grading Profiles"
+            className="glass-panel p-1.5 text-slate-300 hover:text-white hover:border-cyan-400 transition-colors relative cursor-pointer"
+            title="Mission Tools Menu"
           >
-            <Palette className="w-3.5 h-3.5 text-cyan-400" />
-            <span className="hidden md:inline text-[11px] font-display font-medium uppercase tracking-wider">
-              {currentPreset.name}
-            </span>
-            <span 
-              className="w-2 h-2 rounded-full" 
-              style={{ backgroundColor: currentPreset.color }} 
-            />
+            <MoreHorizontal className="w-4 h-4" />
+            {(watchlistCount > 0 || comparisonCount > 0) && (
+              <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+            )}
           </button>
 
-          {/* Color Grading Dropdown Menu */}
-          {isGradeMenuOpen && (
-            <div className="absolute right-0 mt-2 w-56 glass-panel p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 border-cyan-500/40">
-              <div className="text-[10px] font-display font-bold text-slate-400 uppercase tracking-wider px-2 py-1 mb-1 border-b border-white/5">
+          {/* Mobile Tools Dropdown */}
+          {isMobileToolsOpen && (
+            <div className="absolute right-0 mt-2 w-64 glass-panel p-2.5 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 border-cyan-500/40 text-xs font-mono">
+              {/* Watchlist & Compare Quick Row */}
+              <div className="grid grid-cols-2 gap-2 pb-2.5 mb-2.5 border-b border-white/10">
+                <button
+                  onClick={() => {
+                    audio.playSelect();
+                    onOpenWatchlist();
+                    setIsMobileToolsOpen(false);
+                  }}
+                  className="p-2 rounded bg-black/40 border border-cyan-500/20 hover:border-cyan-400 text-slate-300 hover:text-white flex items-center justify-between cursor-pointer"
+                >
+                  <span className="flex items-center gap-1.5">
+                    <Bookmark className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>Watchlist</span>
+                  </span>
+                  <span className="text-[10px] font-bold text-cyan-300">{watchlistCount}</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    audio.playSelect();
+                    onOpenCompare();
+                    setIsMobileToolsOpen(false);
+                  }}
+                  className="p-2 rounded bg-black/40 border border-amber-500/20 hover:border-amber-400 text-slate-300 hover:text-white flex items-center justify-between cursor-pointer"
+                >
+                  <span className="flex items-center gap-1.5">
+                    <Layers className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Compare</span>
+                  </span>
+                  <span className="text-[10px] font-bold text-amber-300">{comparisonCount}</span>
+                </button>
+              </div>
+
+              {/* Color Grading Profiles */}
+              <div className="text-[10px] font-display font-bold text-slate-400 uppercase tracking-wider px-2 py-1">
                 Color Grading Profile
               </div>
-              <div className="space-y-1">
+              <div className="space-y-1 mb-2">
                 {COLOR_GRADE_PRESETS.map(preset => {
                   const active = colorGrade === preset.id;
                   return (
@@ -208,9 +412,9 @@ export const TopNavHUD: React.FC<TopNavHUDProps> = ({
                       onClick={() => {
                         audio.playSelect();
                         onChangeColorGrade(preset.id);
-                        setIsGradeMenuOpen(false);
+                        setIsMobileToolsOpen(false);
                       }}
-                      className={`w-full px-2.5 py-2 rounded text-left flex items-center justify-between text-xs font-mono transition-all cursor-pointer ${
+                      className={`w-full px-2 py-1.5 rounded text-left flex items-center justify-between transition-all cursor-pointer ${
                         active
                           ? 'bg-cyan-500/20 border border-cyan-400/50 text-cyan-300 font-bold'
                           : 'text-slate-300 hover:bg-white/5 hover:text-white'
@@ -223,116 +427,40 @@ export const TopNavHUD: React.FC<TopNavHUDProps> = ({
                         />
                         <span>{preset.name}</span>
                       </div>
-                      <span className="text-[9px] text-slate-500 uppercase">
-                        {preset.tag}
-                      </span>
+                      {active && <Check className="w-3 h-3 text-cyan-400" />}
                     </button>
                   );
                 })}
               </div>
+
+              {/* Provenance & Reset Camera */}
+              <div className="pt-2 border-t border-white/10 space-y-1">
+                <button
+                  onClick={() => {
+                    audio.playSelect();
+                    onOpenProvenance();
+                    setIsMobileToolsOpen(false);
+                  }}
+                  className="w-full px-2 py-1.5 rounded text-slate-300 hover:text-white hover:bg-white/5 flex items-center gap-2 cursor-pointer"
+                >
+                  <Info className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>Scientific Provenance</span>
+                </button>
+                <button
+                  onClick={() => {
+                    audio.playSelect();
+                    onResetView();
+                    setIsMobileToolsOpen(false);
+                  }}
+                  className="w-full px-2 py-1.5 rounded text-slate-300 hover:text-white hover:bg-white/5 flex items-center gap-2 cursor-pointer"
+                >
+                  <RotateCcw className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Reset 3D Camera</span>
+                </button>
+              </div>
             </div>
           )}
         </div>
-
-        {/* 2D / 3D Projection Toggle */}
-        <div className="glass-panel p-1 flex items-center gap-1">
-          <button
-            onClick={() => {
-              audio.playSelect();
-              onToggleViewMode('3D');
-            }}
-            className={`px-2 py-1 sm:px-2.5 text-xs font-display flex items-center gap-1.5 rounded transition-all ${
-              viewMode === '3D' 
-                ? 'bg-cyan-500/30 text-cyan-300 border border-cyan-400/50 shadow-[0_0_10px_rgba(0,240,255,0.3)]' 
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            <Globe className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">3D GLOBE</span>
-          </button>
-
-          <button
-            onClick={() => {
-              audio.playSelect();
-              onToggleViewMode('2D');
-            }}
-            className={`px-2 py-1 sm:px-2.5 text-xs font-display flex items-center gap-1.5 rounded transition-all ${
-              viewMode === '2D' 
-                ? 'bg-cyan-500/30 text-cyan-300 border border-cyan-400/50 shadow-[0_0_10px_rgba(0,240,255,0.3)]' 
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            <Map className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">2D MAP</span>
-          </button>
-        </div>
-
-        {/* Watchlist button */}
-        <button
-          onClick={() => {
-            audio.playSelect();
-            onOpenWatchlist();
-          }}
-          className="glass-panel p-2 text-slate-300 hover:text-cyan-400 hover:border-cyan-400 transition-colors relative"
-          title="Open Watchlist"
-        >
-          <Bookmark className="w-4 h-4" />
-          {watchlistCount > 0 && (
-            <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-cyan-500 text-black text-[9px] font-bold flex items-center justify-center font-mono">
-              {watchlistCount}
-            </span>
-          )}
-        </button>
-
-        {/* Compare button */}
-        <button
-          onClick={() => {
-            audio.playSelect();
-            onOpenCompare();
-          }}
-          className="glass-panel p-2 text-slate-300 hover:text-amber-400 hover:border-amber-400 transition-colors relative"
-          title="Compare Satellites"
-        >
-          <Layers className="w-4 h-4" />
-          {comparisonCount > 0 && (
-            <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-amber-500 text-black text-[9px] font-bold flex items-center justify-center font-mono">
-              {comparisonCount}
-            </span>
-          )}
-        </button>
-
-        {/* Data Provenance modal button */}
-        <button
-          onClick={() => {
-            audio.playSelect();
-            onOpenProvenance();
-          }}
-          className="glass-panel p-2 text-slate-300 hover:text-white hover:border-cyan-400 transition-colors"
-          title="Data Provenance & Scientific Ephemeris"
-        >
-          <Info className="w-4 h-4" />
-        </button>
-
-        {/* Audio Mute toggle */}
-        <button
-          onClick={handleToggleSound}
-          className="glass-panel p-2 text-slate-300 hover:text-white hover:border-cyan-400 transition-colors"
-          title={isMuted ? 'Unmute Audio' : 'Mute Audio'}
-        >
-          {isMuted ? <VolumeX className="w-4 h-4 text-rose-400" /> : <Volume2 className="w-4 h-4 text-cyan-400" />}
-        </button>
-
-        {/* Reset Camera View */}
-        <button
-          onClick={() => {
-            audio.playSelect();
-            onResetView();
-          }}
-          className="glass-panel p-2 text-slate-300 hover:text-white hover:border-cyan-400 transition-colors"
-          title="Reset Camera View"
-        >
-          <RotateCcw className="w-4 h-4" />
-        </button>
       </div>
 
       {/* Permission Toast Notification */}

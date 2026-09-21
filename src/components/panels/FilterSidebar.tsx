@@ -87,7 +87,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
       {!isOpen && (
         <button
           onClick={onToggleOpen}
-          className="absolute left-4 top-20 z-20 glass-panel p-2.5 text-cyan-400 hover:text-white hover:border-cyan-400 transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(0,240,255,0.2)]"
+          className="absolute left-2.5 sm:left-4 top-16 sm:top-20 z-20 glass-panel px-2.5 py-2 sm:p-2.5 text-cyan-400 hover:text-white hover:border-cyan-400 transition-all flex items-center gap-1.5 sm:gap-2 shadow-[0_0_15px_rgba(0,240,255,0.2)] cursor-pointer"
           title="Open Filters Drawer"
         >
           <SlidersHorizontal className="w-4 h-4" />
@@ -98,12 +98,12 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
       {/* Main Drawer */}
       <aside
-        className={`absolute top-16 left-4 bottom-24 w-80 max-w-[calc(100vw-2rem)] z-20 glass-panel flex flex-col transition-all duration-300 ${
-          isOpen ? 'translate-x-0 opacity-100' : '-translate-x-[110%] opacity-0 pointer-events-none'
+        className={`absolute top-14 sm:top-16 left-2 sm:left-4 bottom-20 sm:bottom-24 w-auto sm:w-80 right-2 sm:right-auto max-w-[calc(100vw-1rem)] z-20 glass-panel flex flex-col transition-all duration-300 shadow-2xl ${
+          isOpen ? 'translate-x-0 opacity-100' : '-translate-x-[115%] opacity-0 pointer-events-none'
         }`}
       >
         {/* Header */}
-        <div className="p-4 border-b border-cyan-500/20 flex items-center justify-between">
+        <div className="p-3 sm:p-4 border-b border-cyan-500/20 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <SlidersHorizontal className="w-4 h-4 text-cyan-400" />
             <h2 className="font-display font-bold text-xs tracking-wider text-white uppercase">
@@ -112,7 +112,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
           </div>
           <button
             onClick={onToggleOpen}
-            className="text-slate-400 hover:text-white p-1"
+            className="text-slate-400 hover:text-white p-1 rounded hover:bg-white/10 cursor-pointer"
             title="Hide Filters"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -123,17 +123,17 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
         <div className="grid grid-cols-2 p-2 gap-1 bg-black/30 border-b border-cyan-500/10 text-xs font-display">
           <button
             onClick={() => setActiveTab('filter')}
-            className={`py-1.5 rounded text-center transition-all ${
+            className={`py-1.5 rounded text-center transition-all cursor-pointer ${
               activeTab === 'filter'
                 ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
-            SATELLITES ({filteredCount})
+            SATELLITE FILTERS
           </button>
           <button
             onClick={() => setActiveTab('layers')}
-            className={`py-1.5 rounded text-center transition-all ${
+            className={`py-1.5 rounded text-center transition-all cursor-pointer ${
               activeTab === 'layers'
                 ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
                 : 'text-slate-400 hover:text-white'
@@ -144,7 +144,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
         </div>
 
         {/* Content Scroll Area */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-5">
+        <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-4 sm:space-y-5 no-scrollbar touch-scroll">
           {activeTab === 'filter' ? (
             <>
               {/* Search Box */}

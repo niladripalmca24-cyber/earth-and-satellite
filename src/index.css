@@ -39,16 +39,53 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
-body {
+html, body {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  overflow: hidden;
+  overscroll-behavior: none;
   background-color: #02040a;
   color: #f8fafc;
   font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
-  overflow: hidden;
   user-select: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Safe area support for notched phones */
+.pt-safe {
+  padding-top: max(0.75rem, env(safe-area-inset-top, 0.75rem));
+}
+
+.pb-safe {
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0.75rem));
+}
+
+.pl-safe {
+  padding-left: max(0.75rem, env(safe-area-inset-left, 0.75rem));
+}
+
+.pr-safe {
+  padding-right: max(0.75rem, env(safe-area-inset-right, 0.75rem));
+}
+
+/* Touch friendly scrolling */
+.touch-scroll {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar for clean mobile tabs */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .font-ui {
