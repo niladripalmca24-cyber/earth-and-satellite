@@ -11,6 +11,7 @@
 ---
 
 ## 🌟 Key Features
+live demo link https://earth-and-satellite-1.onrender.com
 
 ### 1. 🌍 Photorealistic 3D Earth & Illuminated Night Hemisphere
 - **NASA Blue Marble & Black Marble Day/Night Shaders**: Twilight terminator blending with specular ocean sun glints and dynamic Rayleigh/Fresnel atmospheric horizon limb scattering.
