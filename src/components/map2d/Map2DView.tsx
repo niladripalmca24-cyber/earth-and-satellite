@@ -11,6 +11,7 @@ import {
   generateGroundTrack 
 } from '../../services/orbitalEngine';
 import { audio } from '../../services/audioService';
+import { calculateSubsolarCoords } from '../../services/timeSync';
 
 interface Map2DViewProps {
   satellites: SatelliteData[];
@@ -97,27 +98,45 @@ export const Map2DView: React.FC<Map2DViewProps> = ({
         ctx.fillText(`${lat}°`, 6, y - 4);
       }
 
-      // Draw Day/Night Terminator Curve
+      // Draw Day/Night Terminator Curve synchronized with subsolar coords
       const date = timeState.currentSimTime;
-      const hours = date.getUTCHours() + date.getUTCMinutes() / 60;
-      const subSolarLng = -((hours / 24) * 360 - 180);
+      const { lat: subSolarLat, lng: subSolarLng } = calculateSubsolarCoords(date);
+      const decRad = subSolarLat * (Math.PI / 180);
+      const tanDec = Math.tan(decRad);
       
       ctx.save();
       ctx.beginPath();
       ctx.moveTo(0, height);
-      for (let x = 0; x <= width; x += 10) {
+      for (let x = 0; x <= width; x += 6) {
         const lng = (x / width) * 360 - 180;
         const deltaLng = (lng - subSolarLng) * (Math.PI / 180);
-        // Solar declination approximation for September equinox
-        const dec = 0.05 * Math.sin((date.getMonth() * 30 + date.getDate()) * (Math.PI / 180));
-        const termLat = -Math.atan(Math.cos(deltaLng) / Math.tan(dec || 0.001)) * (180 / Math.PI);
+        // Terminator latitude formula: tan(lat) = -cos(deltaLng) / tan(dec)
+        const termLat = Math.abs(tanDec) < 0.001
+          ? (Math.cos(deltaLng) >= 0 ? 89 : -89)
+          : -Math.atan(Math.cos(deltaLng) / tanDec) * (180 / Math.PI);
         const y = mapY(Math.max(-85, Math.min(85, termLat)));
         ctx.lineTo(x, y);
       }
       ctx.lineTo(width, height);
       ctx.closePath();
-      ctx.fillStyle = 'rgba(2, 6, 23, 0.45)';
+      ctx.fillStyle = 'rgba(2, 6, 23, 0.48)';
       ctx.fill();
+
+      // Subsolar Point Marker (☀️ Real-time overhead Sun position)
+      const sunScreenX = mapX(subSolarLng);
+      const sunScreenY = mapY(subSolarLat);
+      ctx.beginPath();
+      ctx.arc(sunScreenX, sunScreenY, 6, 0, Math.PI * 2);
+      ctx.fillStyle = '#f59e0b';
+      ctx.fill();
+      ctx.strokeStyle = '#fef08a';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      ctx.fillStyle = '#fef08a';
+      ctx.font = '9px "JetBrains Mono"';
+      ctx.fillText('☀️ ZENITH SUN', sunScreenX + 9, sunScreenY + 3);
+
       ctx.restore();
 
       // Draw Ground Stations

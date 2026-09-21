@@ -8,7 +8,8 @@ import {
   Eye, 
   RotateCcw,
   Sparkles,
-  Palette
+  Palette,
+  Sun
 } from 'lucide-react';
 import { FilterOptions, OrbitRegime, MissionCategory, ObjectStatus, ColorGradeMode } from '../../types/satellite';
 import { audio } from '../../services/audioService';
@@ -340,6 +341,58 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                   </div>
                 );
               })}
+
+              {/* Earth Model Brightness / Luminance */}
+              <div className="p-3 rounded bg-slate-950/60 border border-slate-800 space-y-2">
+                <div className="flex items-center justify-between text-xs font-display">
+                  <span className="text-white flex items-center gap-1.5">
+                    <Sun className="w-3.5 h-3.5 text-cyan-400" />
+                    Earth Model Brightness
+                  </span>
+                  <span className="text-cyan-400 font-mono font-bold">
+                    {Math.round((filters.earthBrightness ?? 1.45) * 100)}%
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min="1.0"
+                  max="2.5"
+                  step="0.05"
+                  value={filters.earthBrightness ?? 1.45}
+                  onChange={e => {
+                    onChangeFilters({
+                      ...filters,
+                      earthBrightness: parseFloat(e.target.value)
+                    });
+                  }}
+                  className="w-full h-1.5 bg-slate-900 rounded appearance-none cursor-pointer accent-cyan-400 border border-cyan-500/20"
+                />
+                <div className="grid grid-cols-3 gap-1 pt-0.5">
+                  {[
+                    { label: 'Normal', val: 1.15 },
+                    { label: 'Vivid (145%)', val: 1.45 },
+                    { label: 'Max (200%)', val: 2.0 },
+                  ].map(p => (
+                    <button
+                      key={p.val}
+                      onClick={() => {
+                        audio.playHover();
+                        onChangeFilters({
+                          ...filters,
+                          earthBrightness: p.val
+                        });
+                      }}
+                      className={`py-1 text-[9px] font-mono rounded text-center transition-all cursor-pointer ${
+                        Math.abs((filters.earthBrightness ?? 1.45) - p.val) < 0.1
+                          ? 'bg-cyan-500/30 text-cyan-300 border border-cyan-400 font-bold'
+                          : 'bg-white/5 text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      {p.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
               {/* Color Grading Profile Selector */}
               <div className="pt-2 border-t border-cyan-500/20">

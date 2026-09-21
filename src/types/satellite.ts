@@ -94,6 +94,7 @@ export interface FilterOptions {
   showNightLights: boolean;
   showAtmosphere: boolean;
   colorGrade: ColorGradeMode;
+  earthBrightness?: number; // Real Earth illumination scale (e.g. 1.0 - 2.5)
 }
 
 export type ViewMode = '3D' | '2D';
@@ -103,4 +104,5 @@ export interface TimeState {
   isPlaying: boolean;
   speedMultiplier: number; // 1, 10, 100, 1000, -10, etc.
   isRealTime: boolean;
+  timeZoneMode?: 'IST' | 'UTC'; // Indian Standard Time vs UTC
 }

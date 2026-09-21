@@ -23,14 +23,15 @@ export const AtmosphereShader = {
       vec3 viewVector = normalize(-vPosition);
       float intensity = pow(coefficient - dot(vNormal, viewVector), power);
       intensity = clamp(intensity, 0.0, 1.0);
-      gl_FragColor = vec4(glowColor, intensity * 0.85);
+      gl_FragColor = vec4(glowColor, intensity * 0.95);
     }
   `
 };
 
 /**
  * Photorealistic Real Earth Shader combining NASA Blue Marble day texture,
- * NASA Black Marble night city lights, specular ocean sheen, and limb scattering
+ * NASA Black Marble night city lights, specular ocean sheen, and limb scattering.
+ * Boosted for high dynamic range brilliance and real-time solar synchronization.
  */
 export const PhotorealisticEarthShader = {
   vertexShader: `
@@ -56,6 +57,7 @@ export const PhotorealisticEarthShader = {
     uniform vec3 sunDirection;
     uniform vec3 atmosphereColor;
     uniform float nightIntensity;
+    uniform float earthBrightness;
 
     varying vec3 vNormal;
     varying vec2 vUv;
@@ -71,9 +73,9 @@ export const PhotorealisticEarthShader = {
       // Sun incidence
       float sunDot = dot(worldNormal, worldSunDir);
       
-      // Smooth twilight transition between day and night
-      float dayFactor = smoothstep(-0.12, 0.15, sunDot);
-      float nightFactor = 1.0 - smoothstep(-0.06, 0.12, sunDot);
+      // Smooth twilight transition between day and night (rich sunrise/sunset terminator)
+      float dayFactor = smoothstep(-0.16, 0.20, sunDot);
+      float nightFactor = 1.0 - smoothstep(-0.08, 0.16, sunDot);
       
       // Sample NASA textures
       vec4 dayColor = texture2D(dayTexture, vUv);
@@ -84,33 +86,39 @@ export const PhotorealisticEarthShader = {
       vec3 worldViewDir = normalize(cameraPosition - vWorldPosition);
       vec3 reflectDir = reflect(-worldSunDir, worldNormal);
       float specAngle = max(dot(worldViewDir, reflectDir), 0.0);
-      float specular = pow(specAngle, 36.0) * specularMap * dayFactor;
-      vec3 specularGlint = vec3(1.0, 0.98, 0.94) * specular * 1.4;
+      float specular = pow(specAngle, 30.0) * specularMap * dayFactor;
+      vec3 specularGlint = vec3(1.0, 0.98, 0.92) * specular * 2.2;
       
-      // Daylight lighting
-      vec3 ambientSpace = vec3(0.06, 0.08, 0.14);
-      vec3 dayLit = dayColor.rgb * (max(sunDot, 0.0) * 0.96 + ambientSpace);
+      // Daylight lighting - boosted for high brilliance, vivid clarity and rich contrast
+      vec3 ambientSpace = vec3(0.24, 0.28, 0.38);
+      float directSun = max(sunDot, 0.0) * 1.45;
+      vec3 dayLit = dayColor.rgb * (directSun + ambientSpace);
       
-      // Opposite side (night) celestial ambient terrain & ocean illumination (earthshine & celestial starlight)
-      // Provides clear, rich visibility of continents, coastlines, mountain ranges, and ocean water depths on the unlit hemisphere
-      vec3 nightAmbientLight = vec3(0.28, 0.38, 0.58); // Luminous starlight & lunar blue-grey tone
-      vec3 nightSurface = dayColor.rgb * nightAmbientLight * (0.65 * nightFactor);
+      // Vibrant ocean scattering enhancement (rich sapphire and turquoise tones)
+      dayLit += vec3(0.04, 0.08, 0.18) * specularMap * dayFactor * max(sunDot, 0.0);
+      
+      // Opposite side (night) celestial ambient terrain & ocean illumination (earthshine & starlight)
+      // High visibility of continents, coastlines, mountain ranges, and ocean water depths on the unlit hemisphere
+      vec3 nightAmbientLight = vec3(0.36, 0.46, 0.68); 
+      vec3 nightSurface = dayColor.rgb * nightAmbientLight * (0.95 * nightFactor);
       
       // Radiant night city lights (vibrant, warm golden glow that pops brilliantly over the terrain)
-      vec3 nightLit = nightColor.rgb * vec3(2.8, 2.2, 1.4) * nightFactor * (nightIntensity * 1.5);
+      vec3 nightLit = nightColor.rgb * vec3(3.8, 3.1, 1.9) * nightFactor * (nightIntensity * 2.0);
       
-      // Combine base surface
-      vec3 color = dayLit * dayFactor + nightSurface + nightLit + specularGlint;
+      // Combine base surface scaled by earthBrightness multiplier
+      float bMultiplier = earthBrightness > 0.1 ? earthBrightness : 1.45;
+      vec3 surfaceColor = dayLit * dayFactor + nightSurface + nightLit + specularGlint;
+      vec3 color = surfaceColor * bMultiplier;
       
       // Atmospheric rim scattering along the horizon
       float fresnel = 1.0 - max(dot(vNormal, viewDir), 0.0);
-      float rim = pow(fresnel, 3.0);
-      float sunLimb = clamp(sunDot * 0.4 + 0.6, 0.25, 1.3);
-      vec3 rimGlow = atmosphereColor * rim * 0.65 * sunLimb;
+      float rim = pow(fresnel, 2.7);
+      float sunLimb = clamp(sunDot * 0.45 + 0.65, 0.35, 1.5);
+      vec3 rimGlow = atmosphereColor * rim * 0.92 * sunLimb;
       
       // Luminous night horizon airglow (subtle ionospheric starlight blue rim)
-      float nightRim = pow(fresnel, 2.4) * nightFactor * 0.65;
-      vec3 nightRimGlow = vec3(0.25, 0.55, 0.95) * nightRim;
+      float nightRim = pow(fresnel, 2.2) * nightFactor * 0.85;
+      vec3 nightRimGlow = vec3(0.25, 0.65, 1.0) * nightRim;
       
       color += rimGlow + nightRimGlow;
       

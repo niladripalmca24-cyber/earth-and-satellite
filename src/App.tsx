@@ -63,6 +63,9 @@ export function App() {
     audio.acceptAllPermissions();
   }, []);
 
+  // Focus region state (e.g. 'INDIA' or 'GLOBAL')
+  const [focusRegion, setFocusRegion] = useState<'INDIA' | 'GLOBAL' | null>('INDIA');
+
   // Global Filter State
   const [filters, setFilters] = useState<FilterOptions>({
     search: '',
@@ -80,6 +83,7 @@ export function App() {
     showNightLights: true,
     showAtmosphere: true,
     colorGrade: 'ACES_FILMIC',
+    earthBrightness: 1.45,
   });
 
   // Filtered Satellites Count
@@ -134,6 +138,10 @@ export function App() {
     } else if (key === 'CHANDRA') {
       const chandra = SATELLITE_CATALOG.find(s => s.id === '25867');
       if (chandra) setSelectedSatellite(chandra);
+    } else if (key === 'INSAT' || key === 'ISRO') {
+      const insat = SATELLITE_CATALOG.find(s => s.id === '58988' || s.name.includes('INSAT-3DS'));
+      if (insat) setSelectedSatellite(insat);
+      setFocusRegion('INDIA');
     } else if (key === 'VANGUARD') {
       const vg = SATELLITE_CATALOG.find(s => s.id === '00005');
       if (vg) setSelectedSatellite(vg);
@@ -158,24 +166,32 @@ export function App() {
 
   const handleEnterExperience = () => {
     setIsCinematic(false);
+    audio.playEnterExperience();
     const isMobile = window.innerWidth < 768;
     if (isMobile) {
       setIsFilterOpen(false);
     } else {
       setIsFilterOpen(true);
     }
-    // Select the ISS by default for an immediate rich first impression
-    const iss = SATELLITE_CATALOG.find(s => s.id === '25544');
-    if (iss) setSelectedSatellite(iss);
+    if (!selectedSatellite) {
+      const insat = SATELLITE_CATALOG.find(s => s.name.includes('INSAT-3DS')) || SATELLITE_CATALOG.find(s => s.id === '25544');
+      if (insat) setSelectedSatellite(insat);
+    }
   };
 
   const handleToggleWatchlist = (sat: SatelliteData) => {
-    setWatchlistIds(prev => 
-      prev.includes(sat.id) ? prev.filter(id => id !== sat.id) : [...prev, sat.id]
-    );
+    audio.playHover();
+    setWatchlistIds(prev => {
+      if (prev.includes(sat.id)) {
+        return prev.filter(id => id !== sat.id);
+      } else {
+        return [...prev, sat.id];
+      }
+    });
   };
 
   const handleToggleCompare = (sat: SatelliteData) => {
+    audio.playSelect();
     setCompareIds(prev => {
       if (prev.includes(sat.id)) {
         return prev.filter(id => id !== sat.id);
@@ -190,6 +206,7 @@ export function App() {
   const handleResetCamera = () => {
     setIsFollowMode(false);
     setSelectedSatellite(null);
+    setFocusRegion('INDIA');
   };
 
   return (
@@ -211,6 +228,8 @@ export function App() {
           isCinematic={isCinematic}
           onEnterExperience={handleEnterExperience}
           comparisonSatellites={comparedSatellites}
+          focusRegion={focusRegion}
+          onClearFocusRegion={() => setFocusRegion(null)}
         />
       )}
 
@@ -254,6 +273,10 @@ export function App() {
             colorGrade={filters.colorGrade}
             onChangeColorGrade={(grade) => setFilters(prev => ({ ...prev, colorGrade: grade }))}
             permissionsGranted={true}
+            earthBrightness={filters.earthBrightness ?? 1.45}
+            onChangeEarthBrightness={(b) => setFilters(prev => ({ ...prev, earthBrightness: b }))}
+            onFocusIndia={() => setFocusRegion('INDIA')}
+            onSelectMission={handleSelectMission}
             onOpenLiveEarthFeed={() => {
               setIsLiveFeedOpen(true);
               setIsLiveFeedMini(false);

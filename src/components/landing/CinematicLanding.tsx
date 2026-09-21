@@ -26,14 +26,13 @@ export const CinematicLanding: React.FC<CinematicLandingProps> = ({
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [activeModal, setActiveModal] = useState<'about' | 'regimes' | null>(null);
   const [selectedRegimeIdx, setSelectedRegimeIdx] = useState(0);
-
   const regimes = ['ALL', 'LEO', 'MEO', 'GEO', 'DEBRIS'];
 
   const featuredSatellites = [
     { id: '01', name: 'International Space Station', key: 'ISS', sub: '420 km LEO · Crewed Station' },
     { id: '02', name: 'Hubble Space Telescope', key: 'HUBBLE', sub: '535 km LEO · Optical Astronomy' },
     { id: '03', name: 'Tiangong Space Station', key: 'TIANGONG', sub: '385 km LEO · Modular Station' },
-    { id: '04', name: 'Starlink Constellation', key: 'STARLINK', sub: '550 km LEO · Global Mesh' },
+    { id: '04', name: 'INSAT-3DS Meteorological', key: 'INSAT', sub: '35,786 km GEO · ISRO India' },
   ];
 
   const handleLaunchClick = (missionKey: string) => {
@@ -76,10 +75,10 @@ export const CinematicLanding: React.FC<CinematicLandingProps> = ({
       </div>
 
       {/* MAIN AEROSPACE SHOWCASE CONTAINER (Sleek Glassmorphic Floating Card) */}
-      <div className="relative w-full max-w-[1260px] h-full max-h-[94vh] sm:max-h-[88vh] min-h-0 rounded-[22px] sm:rounded-[36px] border border-white/[0.12] shadow-[0_25px_90px_rgba(0,0,0,0.92)] flex flex-col justify-between overflow-y-auto md:overflow-hidden no-scrollbar touch-scroll pointer-events-auto bg-gradient-to-b from-[#0e131d]/85 via-[#0a0e17]/35 to-[#080b12]/90">
+      <div className="relative w-full max-w-[1260px] h-full max-h-[94vh] sm:max-h-[88vh] min-h-0 rounded-[22px] sm:rounded-[36px] border border-white/[0.12] shadow-[0_25px_90px_rgba(0,0,0,0.92)] flex flex-col justify-between overflow-y-auto md:overflow-hidden no-scrollbar touch-scroll pointer-events-none bg-gradient-to-b from-[#0e131d]/85 via-[#0a0e17]/35 to-[#080b12]/90">
         
         {/* TOP NAVIGATION BAR */}
-        <header className="w-full px-4 sm:px-10 py-3.5 sm:py-5 flex items-center justify-between border-b border-white/[0.06] z-20">
+        <header className="w-full px-4 sm:px-10 py-3.5 sm:py-5 flex items-center justify-between border-b border-white/[0.06] z-20 pointer-events-auto">
           {/* Aerospace Stylized Monogram Logo */}
           <div 
             onClick={() => {
@@ -219,10 +218,10 @@ export const CinematicLanding: React.FC<CinematicLandingProps> = ({
         </div>
 
         {/* MIDDLE CONTENT COLUMNS (FLANKING THE 3D EARTH) */}
-        <div className="relative flex-1 flex flex-col md:flex-row items-center md:items-center justify-between px-4 sm:px-10 lg:px-14 py-2 sm:py-4 gap-4 md:gap-6 z-10">
+        <div className="relative flex-1 flex flex-col md:flex-row items-center md:items-center justify-between px-4 sm:px-10 lg:px-14 py-2 sm:py-4 gap-4 md:gap-6 z-10 pointer-events-none">
           
           {/* LEFT COLUMN: FEATURED SATELLITES */}
-          <div className="w-full md:w-80 space-y-1.5 sm:space-y-2 select-none">
+          <div className="w-full md:w-80 space-y-1.5 sm:space-y-2 select-none pointer-events-auto">
             <div className="text-[10px] sm:text-[11px] font-hero font-bold text-white tracking-widest uppercase mb-1">
               FEATURED SATELLITES
             </div>
@@ -268,7 +267,7 @@ export const CinematicLanding: React.FC<CinematicLandingProps> = ({
           </div>
 
           {/* RIGHT COLUMN: LIVE ORBIT TELEMETRY SPOTLIGHT (Hidden on small mobile to avoid vertical crowding) */}
-          <div className="hidden md:flex w-full md:w-80 flex-col items-start md:items-end select-none">
+          <div className="hidden md:flex w-full md:w-80 flex-col items-start md:items-end select-none pointer-events-auto">
             <div className="text-[11px] font-hero font-bold text-white tracking-widest uppercase mb-3 text-left md:text-right w-full">
               LIVE TELEMETRY <br />
               SPOTLIGHT
@@ -331,7 +330,7 @@ export const CinematicLanding: React.FC<CinematicLandingProps> = ({
         </div>
 
         {/* BOTTOM CONTROLS & CHUNKY NOTCHED BUTTON */}
-        <div className="w-full px-4 sm:px-10 py-3.5 sm:py-5 flex items-center justify-between border-t border-white/[0.06] z-20">
+        <div className="w-full px-4 sm:px-10 py-3.5 sm:py-5 flex items-center justify-between border-t border-white/[0.06] z-20 pointer-events-auto">
           
           {/* Bottom Left: Chunky Notched Arrow Button */}
           <div className="flex items-center gap-2.5 sm:gap-3 select-none">

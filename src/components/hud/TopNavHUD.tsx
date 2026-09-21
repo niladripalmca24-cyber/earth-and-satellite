@@ -14,10 +14,15 @@ import {
   ShieldCheck,
   Check,
   Sparkles,
-  MoreHorizontal
+  MoreHorizontal,
+  Sun,
+  Moon,
+  Compass,
+  SunMedium
 } from 'lucide-react';
 import { ViewMode, TimeState, ColorGradeMode } from '../../types/satellite';
 import { audio } from '../../services/audioService';
+import { formatISTTime, formatISTDate, getIndiaSolarStatus } from '../../services/timeSync';
 
 interface TopNavHUDProps {
   viewMode: ViewMode;
@@ -35,6 +40,10 @@ interface TopNavHUDProps {
   onChangeColorGrade: (mode: ColorGradeMode) => void;
   permissionsGranted?: boolean;
   onOpenLiveEarthFeed: () => void;
+  earthBrightness?: number;
+  onChangeEarthBrightness?: (brightness: number) => void;
+  onFocusIndia?: () => void;
+  onSelectMission?: (key: string) => void;
 }
 
 const COLOR_GRADE_PRESETS: Array<{ id: ColorGradeMode; name: string; tag: string; color: string }> = [
@@ -60,16 +69,22 @@ export const TopNavHUD: React.FC<TopNavHUDProps> = ({
   colorGrade,
   onChangeColorGrade,
   permissionsGranted = true,
-  onOpenLiveEarthFeed
+  onOpenLiveEarthFeed,
+  earthBrightness = 1.45,
+  onChangeEarthBrightness,
+  onFocusIndia,
+  onSelectMission
 }) => {
   const [isMuted, setIsMuted] = useState(audio.getMuted());
+  const [timeZone, setTimeZone] = useState<'IST' | 'UTC'>('IST');
   const [utcString, setUtcString] = useState('');
+  const [istString, setIstString] = useState('');
   const [julianDate, setJulianDate] = useState('');
   const [isGradeMenuOpen, setIsGradeMenuOpen] = useState(false);
   const [isMobileToolsOpen, setIsMobileToolsOpen] = useState(false);
   const [showPermissionToast, setShowPermissionToast] = useState(false);
 
-  // Update UTC and Julian date clock
+  // Update IST, UTC and Julian date clock
   useEffect(() => {
     const updateClock = () => {
       const now = timeState.currentSimTime;
@@ -77,6 +92,7 @@ export const TopNavHUD: React.FC<TopNavHUDProps> = ({
       const minutes = String(now.getUTCMinutes()).padStart(2, '0');
       const seconds = String(now.getUTCSeconds()).padStart(2, '0');
       setUtcString(`${hours}:${minutes}:${seconds} UTC`);
+      setIstString(`${formatISTTime(now)} IST`);
 
       // Approximate Julian Date calculation
       const timeMs = now.getTime();
@@ -103,6 +119,7 @@ export const TopNavHUD: React.FC<TopNavHUDProps> = ({
   };
 
   const currentPreset = COLOR_GRADE_PRESETS.find(p => p.id === colorGrade) || COLOR_GRADE_PRESETS[0];
+  const indiaSolar = getIndiaSolarStatus(timeState.currentSimTime);
 
   return (
     <header className="absolute top-0 left-0 right-0 z-20 pointer-events-none px-2.5 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between font-ui">
@@ -124,10 +141,17 @@ export const TopNavHUD: React.FC<TopNavHUDProps> = ({
           </div>
         </div>
 
-        {/* Mobile compact UTC clock */}
-        <div className="lg:hidden text-[10px] font-mono text-cyan-300 font-bold px-2 py-0.5 rounded bg-cyan-950/60 border border-cyan-500/20 whitespace-nowrap">
-          {utcString.replace(' UTC', '')}
-        </div>
+        {/* Mobile compact IST / UTC clock */}
+        <button
+          onClick={() => {
+            audio.playHover();
+            setTimeZone(tz => tz === 'IST' ? 'UTC' : 'IST');
+          }}
+          className="lg:hidden text-[10px] font-mono text-cyan-300 font-bold px-2 py-0.5 rounded bg-cyan-950/60 border border-cyan-500/20 whitespace-nowrap flex items-center gap-1 cursor-pointer"
+          title="Click to toggle between IST and UTC"
+        >
+          <span>{timeZone === 'IST' ? istString : utcString}</span>
+        </button>
 
         {/* Live Status indicator (desktop) */}
         <div className="hidden lg:flex items-center gap-2 glass-panel-subtle px-3 py-1.5 text-xs font-mono">
@@ -151,11 +175,30 @@ export const TopNavHUD: React.FC<TopNavHUDProps> = ({
       {/* Center: Mission Chronometer (desktop/large screens) */}
       <div className="hidden lg:flex pointer-events-auto items-center gap-3 glass-panel px-3 sm:px-4 py-1.5 sm:py-2 border-cyan-500/30">
         <div className="text-center">
-          <div className="font-mono text-xs sm:text-base font-bold text-cyan-300 tracking-wider">
-            {utcString}
+          <div className="flex items-center justify-center gap-2">
+            <span className="font-mono text-xs sm:text-base font-bold text-cyan-300 tracking-wider">
+              {timeZone === 'IST' ? istString : utcString}
+            </span>
+            {/* Quick toggle pill */}
+            <button
+              onClick={() => {
+                audio.playHover();
+                setTimeZone(tz => tz === 'IST' ? 'UTC' : 'IST');
+              }}
+              className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-black/60 border border-cyan-500/30 text-cyan-300 hover:text-white cursor-pointer"
+              title="Toggle timezone display (IST / UTC)"
+            >
+              {timeZone === 'IST' ? '⇄ UTC' : '⇄ IST'}
+            </button>
           </div>
-          <div className="text-[9px] sm:text-[10px] font-mono text-slate-400">
-            {julianDate} • {timeState.isRealTime ? 'REAL-TIME' : `${timeState.speedMultiplier}x SIM`}
+          <div className="text-[9px] sm:text-[10px] font-mono text-slate-400 flex items-center justify-center gap-1.5">
+            <span>{timeZone === 'IST' ? 'UTC+05:30 (INDIA)' : julianDate}</span>
+            <span>•</span>
+            <span className={indiaSolar.isDaytime ? 'text-amber-400 font-bold' : 'text-indigo-300'}>
+              {indiaSolar.isDaytime ? '☀️ IST DAYLIGHT' : '🌙 IST NIGHT'}
+            </span>
+            <span>•</span>
+            <span>{timeState.isRealTime ? 'LIVE' : `${timeState.speedMultiplier}x`}</span>
           </div>
         </div>
       </div>
@@ -216,6 +259,22 @@ export const TopNavHUD: React.FC<TopNavHUDProps> = ({
           </button>
         </div>
 
+        {/* Quick Focus India / IST Meridian Button */}
+        {onFocusIndia && (
+          <button
+            onClick={() => {
+              audio.playSelect();
+              onFocusIndia();
+            }}
+            className="glass-panel px-2 py-1 sm:px-2.5 text-xs font-mono flex items-center gap-1 sm:gap-1.5 border-amber-500/40 hover:border-amber-400 text-amber-300 hover:text-amber-200 transition-all cursor-pointer shadow-[0_0_12px_rgba(245,158,11,0.2)]"
+            title="Swoop camera directly to India & Indian Ocean (IST Meridian 82.5°E)"
+          >
+            <Compass className="w-3.5 h-3.5 text-amber-400" />
+            <span className="hidden sm:inline font-bold text-[11px]">INDIA (IST)</span>
+            <span className="inline sm:hidden font-bold text-[11px]">IST</span>
+          </button>
+        )}
+
         {/* Audio Mute toggle (always visible) */}
         <button
           onClick={handleToggleSound}
@@ -235,7 +294,7 @@ export const TopNavHUD: React.FC<TopNavHUDProps> = ({
                 setIsGradeMenuOpen(!isGradeMenuOpen);
               }}
               className="glass-panel px-2.5 py-1.5 sm:px-3 text-xs font-mono flex items-center gap-2 border-cyan-500/30 hover:border-cyan-400 text-slate-200 transition-all cursor-pointer"
-              title="Professional Color Grading Profiles"
+              title="Professional Color Grading & Earth Luminance"
             >
               <Palette className="w-3.5 h-3.5 text-cyan-400" />
               <span className="hidden lg:inline text-[11px] font-display font-medium uppercase tracking-wider">
@@ -247,10 +306,10 @@ export const TopNavHUD: React.FC<TopNavHUDProps> = ({
               />
             </button>
 
-            {/* Color Grading Dropdown Menu */}
+            {/* Color Grading & Lighting Dropdown Menu */}
             {isGradeMenuOpen && (
-              <div className="absolute right-0 mt-2 w-56 glass-panel p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 border-cyan-500/40">
-                <div className="text-[10px] font-display font-bold text-slate-400 uppercase tracking-wider px-2 py-1 mb-1 border-b border-white/5">
+              <div className="absolute right-0 mt-2 w-64 glass-panel p-2.5 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 border-cyan-500/40">
+                <div className="text-[10px] font-display font-bold text-slate-400 uppercase tracking-wider px-1 py-1 mb-1 border-b border-white/5">
                   Color Grading Profile
                 </div>
                 <div className="space-y-1">
@@ -264,7 +323,7 @@ export const TopNavHUD: React.FC<TopNavHUDProps> = ({
                           onChangeColorGrade(preset.id);
                           setIsGradeMenuOpen(false);
                         }}
-                        className={`w-full px-2.5 py-2 rounded text-left flex items-center justify-between text-xs font-mono transition-all cursor-pointer ${
+                        className={`w-full px-2 py-1.5 rounded text-left flex items-center justify-between text-xs font-mono transition-all cursor-pointer ${
                           active
                             ? 'bg-cyan-500/20 border border-cyan-400/50 text-cyan-300 font-bold'
                             : 'text-slate-300 hover:bg-white/5 hover:text-white'
@@ -284,6 +343,50 @@ export const TopNavHUD: React.FC<TopNavHUDProps> = ({
                     );
                   })}
                 </div>
+
+                {/* Real Earth Model Luminance & Brightness Slider */}
+                {onChangeEarthBrightness && (
+                  <div className="mt-2.5 pt-2 border-t border-white/10 px-1">
+                    <div className="flex items-center justify-between text-[10px] font-display font-bold text-slate-300 uppercase tracking-wider mb-1">
+                      <span className="flex items-center gap-1">
+                        <SunMedium className="w-3.5 h-3.5 text-cyan-400" />
+                        Earth Brightness
+                      </span>
+                      <span className="text-cyan-400 font-mono font-bold">{Math.round(earthBrightness * 100)}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="1.0"
+                      max="2.5"
+                      step="0.05"
+                      value={earthBrightness}
+                      onChange={e => onChangeEarthBrightness(parseFloat(e.target.value))}
+                      className="w-full h-1.5 bg-slate-900 rounded appearance-none cursor-pointer accent-cyan-400 border border-cyan-500/20"
+                    />
+                    <div className="grid grid-cols-3 gap-1 mt-1.5">
+                      {[
+                        { label: 'Normal', val: 1.15 },
+                        { label: 'Vivid', val: 1.45 },
+                        { label: 'Brilliant', val: 1.85 },
+                      ].map(b => (
+                        <button
+                          key={b.val}
+                          onClick={() => {
+                            audio.playHover();
+                            onChangeEarthBrightness(b.val);
+                          }}
+                          className={`px-1.5 py-0.5 rounded text-[9px] font-mono text-center transition-all cursor-pointer ${
+                            Math.abs(earthBrightness - b.val) < 0.1
+                              ? 'bg-cyan-500/30 text-cyan-300 border border-cyan-400 font-bold'
+                              : 'bg-white/5 text-slate-400 hover:text-white'
+                          }`}
+                        >
+                          {b.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>

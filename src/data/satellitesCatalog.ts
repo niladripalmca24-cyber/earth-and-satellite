@@ -2114,6 +2114,22 @@ export const SATELLITE_CATALOG: SatelliteData[] = [
 
 export const GROUND_STATIONS: GroundStation[] = [
   {
+    id: 'ISRO-BLR',
+    name: 'ISRO ISTRAC Mission Operations Complex',
+    country: 'India',
+    lat: 13.033,
+    lng: 77.564,
+    network: 'ISRO ISTRAC'
+  },
+  {
+    id: 'ISRO-SHAR',
+    name: 'Satish Dhawan Space Centre Telemetry Station',
+    country: 'India',
+    lat: 13.720,
+    lng: 80.230,
+    network: 'ISRO Telemetry Network'
+  },
+  {
     id: 'DSN-GDS',
     name: 'Goldstone Deep Space Comm Complex',
     country: 'United States',

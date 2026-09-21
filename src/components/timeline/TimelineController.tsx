@@ -10,10 +10,14 @@ import {
   Clock, 
   Radio,
   ChevronUp,
-  ChevronDown
+  ChevronDown,
+  Sun,
+  Moon,
+  Globe
 } from 'lucide-react';
 import { TimeState } from '../../types/satellite';
 import { audio } from '../../services/audioService';
+import { formatISTTime, formatISTDate, getIndiaSolarStatus } from '../../services/timeSync';
 
 interface TimelineControllerProps {
   timeState: TimeState;
@@ -26,6 +30,7 @@ export const TimelineController: React.FC<TimelineControllerProps> = ({
 }) => {
   const [timelineOffsetMinutes, setTimelineOffsetMinutes] = useState(0); // offset from base Date.now() in minutes
   const [baseTime, setBaseTime] = useState<Date>(() => new Date());
+  const [tzMode, setTzMode] = useState<'IST' | 'UTC'>('IST');
 
   // Real-time animation ticker
   useEffect(() => {
@@ -66,6 +71,7 @@ export const TimelineController: React.FC<TimelineControllerProps> = ({
     setBaseTime(now);
     setTimelineOffsetMinutes(0);
     onChangeTimeState({
+      ...timeState,
       currentSimTime: now,
       isPlaying: true,
       speedMultiplier: 1,
@@ -98,8 +104,17 @@ export const TimelineController: React.FC<TimelineControllerProps> = ({
 
   // Format date & time strings
   const simDate = timeState.currentSimTime;
-  const dateStr = simDate.toISOString().split('T')[0];
-  const timeStr = simDate.toTimeString().split(' ')[0] + ' UTC';
+  const istTimeStr = formatISTTime(simDate);
+  const istDateStr = formatISTDate(simDate);
+  const utcHours = String(simDate.getUTCHours()).padStart(2, '0');
+  const utcMinutes = String(simDate.getUTCMinutes()).padStart(2, '0');
+  const utcSeconds = String(simDate.getUTCSeconds()).padStart(2, '0');
+  const utcTimeStr = `${utcHours}:${utcMinutes}:${utcSeconds}`;
+  const utcDateStr = simDate.toISOString().split('T')[0];
+
+  const timeStr = tzMode === 'IST' ? `${istTimeStr} IST` : `${utcTimeStr} UTC`;
+  const dateStr = tzMode === 'IST' ? `${istDateStr}` : `${utcDateStr}`;
+  const indiaSolar = getIndiaSolarStatus(simDate);
 
   return (
     <div className="absolute bottom-0 left-0 right-0 z-20 pointer-events-none p-2 sm:p-3 md:p-4 pb-safe flex flex-col items-center">
@@ -107,13 +122,62 @@ export const TimelineController: React.FC<TimelineControllerProps> = ({
         {/* Top bar: Date, Play controls, Speed Multipliers */}
         <div className="flex items-center justify-between flex-wrap gap-1.5 sm:gap-2 text-xs font-mono">
           {/* Left: Date & Live Status */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
             <div className="flex items-center gap-1.5 sm:gap-2">
               <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cyan-400 shrink-0" />
-              <span className="font-display font-bold text-white text-xs sm:text-sm">
+              <span className="font-display font-bold text-white text-xs sm:text-sm tracking-wider">
                 {timeStr}
               </span>
               <span className="text-slate-400 text-[10px] sm:text-xs hidden sm:inline">{dateStr}</span>
+            </div>
+
+            {/* Timezone Switcher Pill */}
+            <div className="flex items-center bg-black/50 p-0.5 rounded border border-cyan-500/20 text-[10px]">
+              <button
+                onClick={() => {
+                  audio.playHover();
+                  setTzMode('IST');
+                }}
+                className={`px-1.5 py-0.5 rounded font-display transition-all cursor-pointer ${
+                  tzMode === 'IST' 
+                    ? 'bg-cyan-500/30 text-cyan-300 font-bold border border-cyan-400/50 shadow-sm' 
+                    : 'text-slate-400 hover:text-white'
+                }`}
+                title="Display in Indian Standard Time (UTC+05:30)"
+              >
+                IST (+5:30)
+              </button>
+              <button
+                onClick={() => {
+                  audio.playHover();
+                  setTzMode('UTC');
+                }}
+                className={`px-1.5 py-0.5 rounded font-display transition-all cursor-pointer ${
+                  tzMode === 'UTC' 
+                    ? 'bg-cyan-500/30 text-cyan-300 font-bold border border-cyan-400/50 shadow-sm' 
+                    : 'text-slate-400 hover:text-white'
+                }`}
+                title="Display in Universal Coordinated Time (UTC)"
+              >
+                UTC
+              </button>
+            </div>
+
+            {/* India Day/Night Illumination Condition Pill */}
+            <div 
+              className={`hidden sm:flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold border ${
+                indiaSolar.isDaytime
+                  ? 'bg-amber-500/15 text-amber-300 border-amber-500/40'
+                  : 'bg-indigo-950/60 text-indigo-300 border-indigo-500/40'
+              }`}
+              title={indiaSolar.description}
+            >
+              {indiaSolar.isDaytime ? (
+                <Sun className="w-3 h-3 text-amber-400 animate-spin-slow" />
+              ) : (
+                <Moon className="w-3 h-3 text-indigo-300" />
+              )}
+              <span>{indiaSolar.statusLabel} IN INDIA</span>
             </div>
 
             {timeState.isRealTime ? (
@@ -191,14 +255,14 @@ export const TimelineController: React.FC<TimelineControllerProps> = ({
               onClick={syncRealTime}
               className={`px-2 sm:px-2.5 py-1 rounded font-display text-[9px] sm:text-[10px] tracking-wider uppercase border transition-all flex items-center gap-1 shrink-0 cursor-pointer ${
                 timeState.isRealTime
-                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/50'
+                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/50 shadow-[0_0_10px_rgba(16,185,129,0.3)]'
                   : 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30 hover:border-cyan-400 hover:bg-cyan-500/20'
               }`}
-              title="Snap directly to current live UTC"
+              title="Snap directly to current live IST (Indian Standard Time)"
             >
               <Radio className={`w-3 h-3 ${timeState.isRealTime ? 'animate-pulse text-emerald-400' : ''}`} />
-              <span className="hidden xs:inline">REAL-TIME</span>
-              <span className="inline xs:hidden">LIVE</span>
+              <span className="hidden xs:inline">SYNC LIVE IST</span>
+              <span className="inline xs:hidden">LIVE IST</span>
             </button>
 
             {/* Mobile Expand / Minimize Toggle Button */}
