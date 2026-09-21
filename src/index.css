@@ -1,0 +1,293 @@
+@import "tailwindcss";
+
+:root {
+  --font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-ui: 'Plus Jakarta Sans', 'Outfit', system-ui, sans-serif;
+  --font-display: 'Orbitron', 'Chakra Petch', monospace, sans-serif;
+  --font-tech: 'Chakra Petch', 'Orbitron', monospace, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --bg-deep: #02040a;
+  --bg-space: #050a17;
+  --bg-card: rgba(6, 13, 29, 0.75);
+  --bg-card-hover: rgba(10, 22, 48, 0.85);
+  --bg-panel: rgba(4, 9, 21, 0.88);
+  
+  --border-cyan: rgba(0, 240, 255, 0.22);
+  --border-cyan-bright: rgba(0, 240, 255, 0.65);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+
+  --accent-cyan: #00f0ff;
+  --accent-blue: #3b82f6;
+  --accent-green: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-red: #ef4444;
+  --accent-purple: #a855f7;
+
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-dim: #475569;
+
+  --glow-cyan: 0 0 16px rgba(0, 240, 255, 0.45);
+  --glow-cyan-lg: 0 0 32px rgba(0, 240, 255, 0.6);
+  --glow-amber: 0 0 16px rgba(245, 158, 11, 0.45);
+  --glow-green: 0 0 16px rgba(16, 185, 129, 0.45);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #02040a;
+  color: #f8fafc;
+  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
+  overflow: hidden;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-ui {
+  font-family: 'Plus Jakarta Sans', 'Outfit', system-ui, sans-serif;
+}
+
+.font-display {
+  font-family: 'Orbitron', 'Chakra Petch', monospace, sans-serif;
+}
+
+.font-tech {
+  font-family: 'Chakra Petch', 'Orbitron', monospace, sans-serif;
+}
+
+.font-hero {
+  font-family: 'Syncopate', 'Syne', sans-serif;
+}
+
+.font-syne {
+  font-family: 'Syne', sans-serif;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Glassmorphic panels */
+.glass-panel {
+  background: rgba(8, 12, 22, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.75), inset 0 0 16px rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+}
+
+.glass-panel-subtle {
+  background: rgba(8, 12, 22, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  border-radius: 10px;
+}
+
+.glass-button {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #f8fafc;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  font-size: 0.75rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.glass-button:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+.glass-button.active {
+  background: #ffffff;
+  border-color: #ffffff;
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.3);
+  color: #000000;
+  font-weight: 600;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 240, 255, 0.25);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 240, 255, 0.5);
+}
+
+.scanline-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.25) 50%
+  ), linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 0.03),
+    rgba(0, 255, 0, 0.01),
+    rgba(0, 0, 255, 0.03)
+  );
+  background-size: 100% 3px, 3px 100%;
+  opacity: 0.25;
+  z-index: 15;
+}
+
+/* =========================================================================
+   PROFESSIONAL COLOR GRADING & CINEMATIC POST-PROCESSING PROFILES
+   ========================================================================= */
+
+/* Vignette & Optical Film Depth Frame */
+.cinematic-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 12;
+  background: radial-gradient(
+    circle at 50% 50%,
+    transparent 55%,
+    rgba(2, 6, 23, 0.45) 85%,
+    rgba(1, 3, 10, 0.85) 100%
+  );
+}
+
+/* 1. ACES Filmic Profile (Natural, High Dynamic Range, Rich Blacks) */
+.color-grade-ACES_FILMIC {
+  filter: contrast(1.08) saturate(1.06) brightness(1.02);
+}
+
+/* 2. Deep Space Cinema Profile (Interstellar Contrast, Deep Indigo Tone) */
+.color-grade-DEEP_SPACE {
+  filter: contrast(1.22) saturate(1.15) brightness(0.96) hue-rotate(-6deg);
+}
+
+/* 3. Infrared Recon Tactical Profile (FLIR Thermal False-Color Optics) */
+.color-grade-INFRARED_RECON {
+  filter: contrast(1.28) saturate(1.35) brightness(1.05) sepia(0.22) hue-rotate(24deg);
+}
+
+/* 4. Orbital Dawn / Golden Hour (Atmospheric Rayleigh Scattering Glow) */
+.color-grade-ORBITAL_DAWN {
+  filter: contrast(1.12) saturate(1.25) brightness(1.08) sepia(0.16) hue-rotate(-14deg);
+}
+
+/* 5. Cyberpunk Matrix Profile (Vivid Electric Neon & Sharp Contrast) */
+.color-grade-CYBERPUNK {
+  filter: contrast(1.32) saturate(1.48) brightness(1.04) hue-rotate(18deg);
+}
+
+/* HUD corner brackets */
+.hud-corner-tl {
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 8px;
+  height: 8px;
+  border-top: 2px solid #00f0ff;
+  border-left: 2px solid #00f0ff;
+}
+
+.hud-corner-tr {
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 8px;
+  height: 8px;
+  border-top: 2px solid #00f0ff;
+  border-right: 2px solid #00f0ff;
+}
+
+.hud-corner-bl {
+  position: absolute;
+  bottom: -1px;
+  left: -1px;
+  width: 8px;
+  height: 8px;
+  border-bottom: 2px solid #00f0ff;
+  border-left: 2px solid #00f0ff;
+}
+
+.hud-corner-br {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 8px;
+  height: 8px;
+  border-bottom: 2px solid #00f0ff;
+  border-right: 2px solid #00f0ff;
+}
+
+/* Badge tags */
+.badge-regime {
+  font-family: 'Orbitron', monospace, sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  padding: 0.15rem 0.45rem;
+  border-radius: 3px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.badge-regime.LEO {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #34d399;
+}
+
+.badge-regime.MEO {
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  color: #60a5fa;
+}
+
+.badge-regime.GEO {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #fbbf24;
+}
+
+.badge-regime.HEO {
+  background: rgba(168, 85, 247, 0.15);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  color: #c084fc;
+}
+
+.badge-regime.DEBRIS {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #f87171;
+}
